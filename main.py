@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-CELL_SIZE = 5 # Dimensiunea unei celule
+CELL_SIZE = 4 # Dimensiunea unei celule
 IMAGE_PATH = "poza1.jpg"  # Calea către imaginea de intrare
 
 def bcd_with_obstacles(numpy_map, cell_size):
