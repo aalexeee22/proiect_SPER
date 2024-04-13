@@ -1,91 +1,84 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-CELL_SIZE = 4 # Dimensiunea unei celule
-IMAGE_PATH = "poza1.jpg"  # Calea către imaginea de intrare
+marime_celula = 4 #dimensiunea unei celule
+path_imagine = "poza1.jpg" #imaginea cu obstacolele
+#path_imagine = "poza2.jpeg"  #imaginea cu obstacolele
 
-def bcd_with_obstacles(numpy_map, cell_size):
-    # Calcularea dimensiunii grilei de celule
-    num_rows = numpy_map.shape[0] // cell_size
-    num_cols = numpy_map.shape[1] // cell_size
+def bcd_cu_obstacole(numpy_map, marime_celula):
+    #calculam dimensiunea grilei de celule
+    nr_linii = numpy_map.shape[0] // marime_celula
+    nr_coloane = numpy_map.shape[1] // marime_celula
 
-    visited = np.zeros((num_rows, num_cols), dtype=bool)
-    # group obstacles in cells where numpy_map is 1
-    for i in range(num_rows):
-        for j in range(num_cols):
-            if numpy_map[i * cell_size:(i + 1) * cell_size, j * cell_size:(j + 1) * cell_size].any():
-                visited[i, j] = True
+    vizitat = np.zeros((nr_linii, nr_coloane), dtype=bool)
+    #grupam obstacolele in celulele unde numpy_map este 1
+    for i in range(nr_linii):
+        for j in range(nr_coloane):
+            if numpy_map[i * marime_celula:(i + 1) * marime_celula, j * marime_celula:(j + 1) * marime_celula].any():
+                vizitat[i, j] = True
 
-    # Plot the map
-    plt.imshow(visited, cmap='gray')
-    plt.title('Map')
+    #plotam harta
+    plt.imshow(vizitat, cmap='gray')
+    plt.title('Harta obstacole')
     plt.show()
 
-    # Parcurgerea celulelor în zigzag evitând obstacolele
-    polygons = []
-    for row in range(num_rows):
-        if row % 2 == 0:  # Parcurgere de la stânga la dreapta
-            for col in range(num_cols):
-                if not visited[row][col]:
-                    polygon = traverse_cell(row, col, cell_size, visited)
-                    polygons.append(polygon)
-        else:  # Parcurgere de la dreapta la stânga
-            for col in reversed(range(num_cols)):
-                if not visited[row][col]:
-                    polygon = traverse_cell(row, col, cell_size, visited)
-                    polygons.append(polygon)
+    #parcurgem celulele in zigzag evitand obstacolele
+    poligoane = []
+    for linie in range(nr_linii):
+        if linie % 2 == 0:  #parcurgem de la stanga la dreapta
+            for col in range(nr_coloane):
+                if not vizitat[linie][col]:
+                    poligon = traversare_celula(linie, col, marime_celula, vizitat)
+                    poligoane.append(poligon)
+        else:  #parcurgem de la dreapta la stanga
+            for col in reversed(range(nr_coloane)):
+                if not vizitat[linie][col]:
+                    poligon = traversare_celula(linie, col, marime_celula, vizitat)
+                    poligoane.append(poligon)
 
-    return polygons
+    return poligoane
+def traversare_celula(linie, coloana, marime_celula, vizitat):
+    #determinarea coordonatelor celulei
+    x = coloana * marime_celula
+    y = linie * marime_celula
 
+    #parcurgerea celulei si marcarea celulelor vizitate
+    poligon = [(x,y), (x + marime_celula,y), (x + marime_celula,y + marime_celula), (x,y + marime_celula)]
+    vizitat[linie][coloana] = True
 
-def traverse_cell(row, col, cell_size, visited):
-    # Determinarea coordonatelor celulei
-    x = col * cell_size
-    y = row * cell_size
-#
+    return poligon
 
-    # Parcurgerea celulei și marcarea celulelor vizitate
-    polygon = [(x, y), (x + cell_size, y), (x + cell_size, y + cell_size), (x, y + cell_size)]
-    visited[row][col] = True
+def transforma_imagine_in_matrice_binara(path_imagine):
+    img = plt.imread(path_imagine)#citim imaginea
 
-    return polygon
-
-
-# Exemplu de utilizare
-
-def image_to_binary_matrix(image_path):
-    # Citirea imaginii alb-negru
-    img = plt.imread(image_path)
-
-    # Verificare dacă imaginea a fost citită corect
+    #verificam daca imaginea a fost citita corect
     if img is None:
         print("Nu s-a putut citi imaginea.")
         return None
 
-    # Conversia la o matrice binară
-    img_gray = np.mean(img, axis=2)  # Convertirea la alb-negru
-    binary_matrix = np.where(img_gray > 0.01, 1, 0)  # Conversia în matrice binară
+    img_gray = np.mean(img, axis=2)  #convertirea la alb-negru
+    matrice_binara = np.where(img_gray > 0.01, 1, 0)  #conversia in matrice binara
 
-    return binary_matrix
+    return matrice_binara
 
-binary_matrix = image_to_binary_matrix(IMAGE_PATH)
-polygons = bcd_with_obstacles(binary_matrix, CELL_SIZE)
+matrice_binara = transforma_imagine_in_matrice_binara(path_imagine)
+poligoane = bcd_cu_obstacole(matrice_binara, marime_celula)
 
-map_array = np.zeros((binary_matrix.shape[0] // CELL_SIZE + 1, binary_matrix.shape[1] // CELL_SIZE + 1))
-for polygon in polygons:
-    p1, p2, p3, p4 = polygon
+map_array = np.zeros((matrice_binara.shape[0] // marime_celula + 1, matrice_binara.shape[1] // marime_celula + 1))
+for poligon in poligoane:
+    p1, p2, p3, p4 = poligon
     x1, y1 = p1
     x2, y2 = p2
     x3, y3 = p3
     x4, y4 = p4
-    map_array[y1 // CELL_SIZE, x1 // CELL_SIZE] = 1
-    map_array[y2 // CELL_SIZE, x2 // CELL_SIZE] = 1
-    map_array[y3 // CELL_SIZE, x3 // CELL_SIZE] = 1
-    map_array[y4 // CELL_SIZE, x4 // CELL_SIZE] = 1
+    map_array[y1 // marime_celula, x1 // marime_celula] = 1
+    map_array[y2 // marime_celula, x2 // marime_celula] = 1
+    map_array[y3 // marime_celula, x3 // marime_celula] = 1
+    map_array[y4 // marime_celula, x4 // marime_celula] = 1
 
-# reverse y axis
+#inversam axa y
 plt.gca().invert_yaxis()
 plt.imshow(map_array, cmap='gray')
-plt.title('Map')
+plt.title('Harta traseu')
 plt.show()
 
