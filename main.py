@@ -2,8 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 marime_celula = 4 #dimensiunea unei celule
-path_imagine = "poza1.jpg" #imaginea cu obstacolele
+#path_imagine = "poza1.jpg" #imaginea cu obstacolele
 #path_imagine = "poza2.jpeg"  #imaginea cu obstacolele
+path_imagine = "poza3.jpeg"  #imaginea cu obstacolele
 
 def bcd_cu_obstacole(numpy_map, marime_celula):
     #calculam dimensiunea grilei de celule
