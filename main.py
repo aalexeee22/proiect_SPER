@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-marime_celula = 4 #dimensiunea unei celule
-#path_imagine = "poza1.jpg" #imaginea cu obstacolele
+marime_celula = 10 #dimensiunea unei celule
+path_imagine = "poza1.jpg" #imaginea cu obstacolele
 #path_imagine = "poza2.jpeg"  #imaginea cu obstacolele
-path_imagine = "poza3.jpeg"  #imaginea cu obstacolele
+#path_imagine = "poza3.jpeg"  #imaginea cu obstacolele
 
 def bcd_cu_obstacole(numpy_map, marime_celula):
     #calculam dimensiunea grilei de celule
@@ -77,9 +77,12 @@ for poligon in poligoane:
     map_array[y3 // marime_celula, x3 // marime_celula] = 1
     map_array[y4 // marime_celula, x4 // marime_celula] = 1
 
-#inversam axa y
+# Plot the polygons
+plt.figure()
+# Inverse the y axis to match the image
 plt.gca().invert_yaxis()
-plt.imshow(map_array, cmap='gray')
-plt.title('Harta traseu')
+for poligon in poligoane:
+    plt.fill(*zip(*poligon), color='blue', alpha=0.5)
+plt.title('Poligoane')
 plt.show()
 
