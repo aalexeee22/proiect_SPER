@@ -77,9 +77,8 @@ for poligon in poligoane:
     map_array[y3 // marime_celula, x3 // marime_celula] = 1
     map_array[y4 // marime_celula, x4 // marime_celula] = 1
 
-# Plot the polygons
+# plot poligoane
 plt.figure()
-# Inverse the y axis to match the image
 plt.gca().invert_yaxis()
 for poligon in poligoane:
     plt.fill(*zip(*poligon), color='blue', alpha=0.5)
