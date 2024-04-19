@@ -82,6 +82,6 @@ plt.figure()
 plt.gca().invert_yaxis()
 for poligon in poligoane:
     plt.fill(*zip(*poligon), color='blue', alpha=0.5)
-plt.title('Poligoane')
+plt.title('Polygons')
 plt.show()
 
